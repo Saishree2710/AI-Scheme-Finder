@@ -1,0 +1,70 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-image: url("../images/bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* dark overlay so text is readable */
+.overlay {
+    background: rgba(20,18,14,0.65);
+    min-height: 100vh;
+    padding: 50px;
+}
+
+/* header */
+.header {
+    text-align: center;
+    color: #e8d6a5;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* search box */
+.search-container {
+    max-width: 750px;
+    margin: auto;
+}
+
+/* buttons */
+.btn-submit {
+    background: #c8a96a;
+    border: none;
+    color: #000;
+}
+
+.btn-submit:hover {
+    background: #e8d6a5;
+    color: #000;
+}
+
+/* scheme cards */
+.scheme-card {
+    background: rgba(30,26,20,0.85);
+    color: #f5e7c6;
+    border-radius: 12px;
+    border: 1px solid #c8a96a;
+    transition: 0.3s;
+}
+
+.scheme-card:hover {
+    transform: scale(1.03);
+}
+
+.scheme-card h5 {
+    color: #e8d6a5;
+}
+
+/* results panel */
+.results {
+    background: rgba(28,26,22,0.9);
+    padding: 20px;
+    border-radius: 10px;
+}

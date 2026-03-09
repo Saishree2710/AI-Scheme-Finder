@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>AI Government Scheme Finder</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="overlay">
+
+<div class="container">
+
+<div class="header">
+<h1>🌾 AI Government Scheme Finder</h1>
+<p>Find schemes that support farmers, students and citizens</p>
+</div>
+
+<form method="POST">
+
+<div class="input-group input-group-lg search-container mb-5">
+
+<input type="text"
+name="query"
+class="form-control"
+placeholder="Example: I am a farmer who needs financial help">
+
+<button class="btn btn-submit">
+Search
+</button>
+
+</div>
+
+</form>
+
+<div class="row">
+
+{% for scheme in schemes %}
+
+<div class="col-md-6">
+
+<div class="card scheme-card mb-4 shadow">
+
+<div class="card-body">
+
+<h5>{{ scheme.name }}</h5>
+
+<p><b>Category:</b> {{ scheme.category }}</p>
+
+<p><b>Eligibility:</b> {{ scheme.eligibility }}</p>
+
+<p><b>Benefits:</b> {{ scheme.benefits }}</p>
+
+<p><b>About:</b> {{ scheme.about }}</p>
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
