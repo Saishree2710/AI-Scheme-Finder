@@ -8,69 +8,247 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
+<style>
+  /* ── Language Toggle ── */
+  .lang-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 28px;
+  }
+
+  .lang-toggle input[type="radio"] { display: none; }
+
+  .lang-toggle label {
+    padding: 8px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid #c8a96a;
+    color: #c8a96a;
+    background: transparent;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .lang-toggle label:first-of-type {
+    border-radius: 8px 0 0 8px;
+    border-right: none;
+  }
+
+  .lang-toggle label:nth-of-type(2) {
+    border-right: none;
+  }
+
+  .lang-toggle label:last-of-type {
+    border-radius: 0 8px 8px 0;
+  }
+
+  .lang-toggle input:checked + label {
+    background: #c8a96a;
+    color: #000;
+  }
+
+  /* ── Profile Fields ── */
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 560px) {
+    .profile-grid { grid-template-columns: 1fr; }
+  }
+
+  .profile-grid input,
+  .profile-grid select {
+    width: 100%;
+    background: rgba(20, 18, 14, 0.7);
+    border: 1px solid #c8a96a55;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #f5e7c6;
+    font-family: 'Segoe UI', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .profile-grid input::placeholder { color: #a08858; }
+  .profile-grid input:focus,
+  .profile-grid select:focus { border-color: #c8a96a; }
+  .profile-grid select option { background: #1c1a14; }
+
+  /* ── Query hint ── */
+  .query-hint {
+    font-size: 12px;
+    color: #a08858;
+    margin-top: 6px;
+    text-align: center;
+  }
+</style>
+
 </head>
 
 <body>
 
 <div class="overlay">
 
-<div class="container">
+  <div class="container">
 
-<div class="header">
-<h1>🌾 AI Government Scheme Finder</h1>
-<p>Find schemes that support farmers, students and citizens</p>
+    <div class="header">
+      <h1>🌾 AI Government Scheme Finder</h1>
+      <p>Find schemes that support farmers, students and citizens</p>
+    </div>
+
+    <form method="POST">
+
+      <div class="search-container">
+
+        <!-- Language Toggle -->
+        <div class="lang-toggle">
+          <input type="radio" name="language" id="lang-en" value="English"
+            {% if form_data.get('language', 'English') == 'English' %}checked{% endif %}>
+          <label for="lang-en">🇬🇧 English</label>
+
+          <input type="radio" name="language" id="lang-hi" value="Hindi"
+            {% if form_data.get('language') == 'Hindi' %}checked{% endif %}>
+          <label for="lang-hi">🇮🇳 हिन्दी</label>
+
+          <input type="radio" name="language" id="lang-ta" value="Tamil"
+            {% if form_data.get('language') == 'Tamil' %}checked{% endif %}>
+          <label for="lang-ta">🇮🇳 தமிழ்</label>
+        </div>
+
+        <!-- Profile Fields -->
+        <div class="profile-grid">
+          <input type="number" name="age" placeholder="Age (e.g. 35)" min="1" max="120"
+            value="{{ form_data.get('age', '') }}"/>
+
+          <select name="gender">
+            <option value="" {% if not form_data.get('gender') %}selected{% endif %} disabled>Gender</option>
+            <option value="Male"   {% if form_data.get('gender') == 'Male'   %}selected{% endif %}>Male</option>
+            <option value="Female" {% if form_data.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+            <option value="Other"  {% if form_data.get('gender') == 'Other'  %}selected{% endif %}>Other</option>
+          </select>
+
+          <input type="text" name="occupation" placeholder="Occupation (e.g. Farmer)"
+            value="{{ form_data.get('occupation', '') }}"/>
+
+          <input type="text" name="state" placeholder="State (e.g. Tamil Nadu)"
+            value="{{ form_data.get('state', '') }}"/>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="input-group input-group-lg mb-2">
+          <input type="text"
+            name="query"
+            class="form-control"
+            placeholder="Example: financial help for education / கல்விக்கு நிதி / शिक्षा के लिए सहायता"
+            value="{{ form_data.get('query', '') }}">
+          <button class="btn btn-submit">Search</button>
+        </div>
+        <p class="query-hint">Type in English, Hindi or Tamil based on your selected language above.</p>
+
+      </div>
+
+    </form>
+
+    <!-- Results -->
+    {% if schemes %}
+    <div class="results mt-5">
+      <div class="row">
+        {% for scheme in schemes %}
+        <div class="col-md-6">
+          <div class="card scheme-card mb-4 shadow">
+            <div class="card-body">
+              <h5>{{ scheme.name }}</h5>
+              <p><b>Category:</b> {{ scheme.category }}</p>
+              <p><b>Eligibility:</b> {{ scheme.eligibility }}</p>
+              <p><b>Benefits:</b> {{ scheme.benefits }}</p>
+              <p><b>About:</b> {{ scheme.about }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
 </div>
+<script>
+  const translations = {
+    English: {
+      age:        "Age (e.g. 35)",
+      occupation: "Occupation (e.g. Farmer)",
+      state:      "State (e.g. Tamil Nadu)",
+      gender:     "Gender",
+      male:       "Male",
+      female:     "Female",
+      other:      "Other",
+      query:      "financial help for education / கல்விக்கு நிதி / शिक्षा के लिए सहायता",
+      search:     "Search",
+      hint:       "Type in English, Hindi or Tamil based on your selected language above."
+    },
+    Hindi: {
+      age:        "आयु (जैसे 35)",
+      occupation: "व्यवसाय (जैसे किसान)",
+      state:      "राज्य (जैसे उत्तर प्रदेश)",
+      gender:     "लिंग",
+      male:       "पुरुष",
+      female:     "महिला",
+      other:      "अन्य",
+      query:      "उदाहरण: शिक्षा के लिए वित्तीय सहायता",
+      search:     "खोजें",
+      hint:       "ऊपर चुनी गई भाषा में टाइप करें।"
+    },
+    Tamil: {
+      age:        "வயது (எ.கா. 35)",
+      occupation: "தொழில் (எ.கா. விவசாயி)",
+      state:      "மாநிலம் (எ.கா. தமிழ்நாடு)",
+      gender:     "பாலினம்",
+      male:       "ஆண்",
+      female:     "பெண்",
+      other:      "மற்றவை",
+      query:      "எடுத்துக்காட்டு: கல்விக்கு நிதி உதவி",
+      search:     "தேடு",
+      hint:       "மேலே தேர்ந்தெடுத்த மொழியில் தட்டச்சு செய்யுங்கள்."
+    }
+  };
 
-<form method="POST">
+  function applyLanguage(lang) {
+    const t = translations[lang];
 
-<div class="input-group input-group-lg search-container mb-5">
+    // placeholders
+    document.querySelector('input[name="age"]').placeholder        = t.age;
+    document.querySelector('input[name="occupation"]').placeholder = t.occupation;
+    document.querySelector('input[name="state"]').placeholder      = t.state;
+    document.querySelector('input[name="query"]').placeholder      = t.query;
 
-<input type="text"
-name="query"
-class="form-control"
-placeholder="Example: I am a farmer who needs financial help">
+    // search button
+    document.querySelector('.btn-submit').textContent = t.search;
 
-<button class="btn btn-submit">
-Search
-</button>
+    // hint
+    document.querySelector('.query-hint').textContent = t.hint;
 
-</div>
+    // gender dropdown
+    const sel = document.querySelector('select[name="gender"]');
+    sel.options[0].text = t.gender;
+    sel.options[1].text = t.male;
+    sel.options[2].text = t.female;
+    sel.options[3].text = t.other;
+  }
 
-</form>
+  // run on toggle change
+  document.querySelectorAll('input[name="language"]').forEach(radio => {
+    radio.addEventListener('change', () => applyLanguage(radio.value));
+  });
 
-<div class="row">
-
-{% for scheme in schemes %}
-
-<div class="col-md-6">
-
-<div class="card scheme-card mb-4 shadow">
-
-<div class="card-body">
-
-<h5>{{ scheme.name }}</h5>
-
-<p><b>Category:</b> {{ scheme.category }}</p>
-
-<p><b>Eligibility:</b> {{ scheme.eligibility }}</p>
-
-<p><b>Benefits:</b> {{ scheme.benefits }}</p>
-
-<p><b>About:</b> {{ scheme.about }}</p>
-
-</div>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-</div>
-
+  // run on page load to match pre-selected language (after form submit)
+  const selected = document.querySelector('input[name="language"]:checked');
+  if (selected) applyLanguage(selected.value);
+</script>
 </body>
 </html>

@@ -7,12 +7,35 @@ app = Flask(__name__)
 def home():
 
     schemes = []
+    form_data = {}
 
     if request.method == "POST":
-        query = request.form["query"]
-        schemes = find_schemes(query)
+        language   = request.form.get("language", "English")
+        age        = request.form.get("age", "")
+        occupation = request.form.get("occupation", "")
+        gender     = request.form.get("gender", "")
+        state      = request.form.get("state", "")
+        query      = request.form.get("query", "")
 
-    return render_template("index.html", schemes=schemes)
+        form_data = {
+            "language":   language,
+            "age":        age,
+            "occupation": occupation,
+            "gender":     gender,
+            "state":      state,
+            "query":      query,
+        }
+
+        schemes = find_schemes(
+            query=query,
+            language=language,
+            age=age,
+            occupation=occupation,
+            gender=gender,
+            state=state,
+        )
+
+    return render_template("index.html", schemes=schemes, form_data=form_data)
 
 
 if __name__ == "__main__":
