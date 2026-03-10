@@ -39,7 +39,6 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 # file to store embeddings
 embedding_file = "scheme_embeddings.npy"
 
-# compute embeddings only if file doesn't exist
 if os.path.exists(embedding_file):
     print("Loading saved embeddings...")
     scheme_embeddings = np.load(embedding_file)
@@ -106,19 +105,48 @@ def find_schemes(query, language="English", age="", occupation="", gender="", st
     return results
 
 
-def get_scheme_by_id(scheme_id):
+def get_scheme_by_id(scheme_id, language="English"):
     if scheme_id < 0 or scheme_id >= len(df):
         return None
+
     scheme = df.iloc[scheme_id]
+
+    name                = scheme["scheme_name"]
+    category            = scheme["schemeCategory"]
+    tags                = scheme["tags"]
+    eligibility         = scheme["eligibility"]
+    benefits            = scheme["benefits"]
+    about               = scheme["details"]
+    documents           = str(scheme.get("documents", "Not specified"))
+    application_process = str(scheme.get("application_process", "Not specified"))
+    official_link       = scheme.get("official_link", None)
+
+    lang_code = {"Tamil": "ta", "Hindi": "hi"}.get(language)
+    if lang_code:
+        try:
+            translator = GoogleTranslator(source='auto', target=lang_code)
+            name        = translator.translate(name)
+            category    = translator.translate(category)
+            tags        = translator.translate(tags)
+            eligibility = translator.translate(eligibility)
+            benefits    = translator.translate(benefits)
+            about       = translator.translate(about)
+            if documents != "Not specified":
+                documents = translator.translate(documents)
+            if application_process != "Not specified":
+                application_process = translator.translate(application_process)
+        except Exception:
+            pass
+
     return {
         "id":                  scheme_id,
-        "name":                scheme["scheme_name"],
-        "category":            scheme["schemeCategory"],
-        "tags":                scheme["tags"],
-        "eligibility":         scheme["eligibility"],
-        "benefits":            scheme["benefits"],
-        "about":               scheme["details"],
-        "documents":           str(scheme.get("documents", "Not specified")),
-        "application_process": str(scheme.get("application_process", "Not specified")),
-        "official_link":       scheme.get("official_link", None),
+        "name":                name,
+        "category":            category,
+        "tags":                tags,
+        "eligibility":         eligibility,
+        "benefits":            benefits,
+        "about":               about,
+        "documents":           documents,
+        "application_process": application_process,
+        "official_link":       official_link,
     }

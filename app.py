@@ -40,7 +40,8 @@ def home():
 
 @app.route("/scheme/<int:scheme_id>")
 def scheme_detail(scheme_id):
-    scheme = get_scheme_by_id(scheme_id)
+    language = request.args.get("lang", "English")
+    scheme = get_scheme_by_id(scheme_id, language=language)
     if scheme is None:
         return "Scheme not found", 404
     return render_template("scheme_detail.html", scheme=scheme)

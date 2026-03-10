@@ -183,7 +183,8 @@
               <p><b>Eligibility:</b> {{ scheme.eligibility }}</p>
               <p><b>Benefits:</b> {{ scheme.benefits }}</p>
               <p><b>About:</b> {{ scheme.about }}</p>
-              <a href="/scheme/{{ scheme.id }}" class="view-details-link">View full details →</a>
+              <a href="/scheme/{{ scheme.id }}?lang={{ form_data.get('language', 'English') }}"
+                 class="view-details-link">View full details →</a>
             </div>
           </div>
         </div>
