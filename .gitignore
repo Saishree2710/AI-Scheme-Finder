@@ -1,0 +1,13 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Build folders
+.dist/
+
+# ML generated files
+scheme_embeddings.npy
+
+# Virtual environments
+venv/
+.env
