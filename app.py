@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from model import find_schemes
+from model import find_schemes, get_scheme_by_id
 
 app = Flask(__name__)
 
@@ -36,6 +36,14 @@ def home():
         )
 
     return render_template("index.html", schemes=schemes, form_data=form_data)
+
+
+@app.route("/scheme/<int:scheme_id>")
+def scheme_detail(scheme_id):
+    scheme = get_scheme_by_id(scheme_id)
+    if scheme is None:
+        return "Scheme not found", 404
+    return render_template("scheme_detail.html", scheme=scheme)
 
 
 if __name__ == "__main__":

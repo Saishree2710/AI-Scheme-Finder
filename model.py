@@ -52,10 +52,8 @@ else:
 
 def find_schemes(query, language="English", age="", occupation="", gender="", state=""):
 
-    # Map language name to source language code
     lang_code = {"Tamil": "ta", "Hindi": "hi"}.get(language)
 
-    # Translate non-English query to English for the model
     if lang_code and query.strip():
         try:
             query_en = GoogleTranslator(source=lang_code, target='en').translate(query)
@@ -64,13 +62,8 @@ def find_schemes(query, language="English", age="", occupation="", gender="", st
     else:
         query_en = query
 
-    # Build user profile string
     if age or occupation or gender or state:
-        user_profile = f"""
-        {age} year old {gender} from {state}
-        working as {occupation}
-        who needs {query_en}
-        """
+        user_profile = f"{age} year old {gender} from {state} working as {occupation} who needs {query_en}"
     else:
         user_profile = query_en
 
@@ -79,18 +72,15 @@ def find_schemes(query, language="English", age="", occupation="", gender="", st
     top_indices = scores[0].argsort()[-3:][::-1]
 
     results = []
-
     for i in top_indices:
         scheme = df.iloc[i]
-
         name        = scheme["scheme_name"]
         category    = scheme["schemeCategory"]
         eligibility = scheme["eligibility"][:300]
         benefits    = scheme["benefits"][:300]
         about       = scheme["details"][:300]
-        documents   = scheme.get("documents", "Not specified")[:300]
+        documents   = str(scheme.get("documents", "Not specified"))[:300]
 
-        # Translate results to selected language if not English
         if lang_code:
             try:
                 translator = GoogleTranslator(source='auto', target=lang_code)
@@ -101,9 +91,10 @@ def find_schemes(query, language="English", age="", occupation="", gender="", st
                 about       = translator.translate(about)
                 documents   = translator.translate(documents)
             except Exception:
-                pass  # fall back to English if translation fails
+                pass
 
         results.append({
+            "id":          int(i),
             "name":        name,
             "category":    category,
             "eligibility": eligibility,
@@ -113,3 +104,21 @@ def find_schemes(query, language="English", age="", occupation="", gender="", st
         })
 
     return results
+
+
+def get_scheme_by_id(scheme_id):
+    if scheme_id < 0 or scheme_id >= len(df):
+        return None
+    scheme = df.iloc[scheme_id]
+    return {
+        "id":                  scheme_id,
+        "name":                scheme["scheme_name"],
+        "category":            scheme["schemeCategory"],
+        "tags":                scheme["tags"],
+        "eligibility":         scheme["eligibility"],
+        "benefits":            scheme["benefits"],
+        "about":               scheme["details"],
+        "documents":           str(scheme.get("documents", "Not specified")),
+        "application_process": str(scheme.get("application_process", "Not specified")),
+        "official_link":       scheme.get("official_link", None),
+    }

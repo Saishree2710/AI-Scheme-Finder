@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
 <style>
-  /* ── Language Toggle ── */
   .lang-toggle {
     display: flex;
     justify-content: center;
@@ -35,20 +34,15 @@
     border-right: none;
   }
 
-  .lang-toggle label:nth-of-type(2) {
-    border-right: none;
-  }
+  .lang-toggle label:nth-of-type(2) { border-right: none; }
 
-  .lang-toggle label:last-of-type {
-    border-radius: 0 8px 8px 0;
-  }
+  .lang-toggle label:last-of-type { border-radius: 0 8px 8px 0; }
 
   .lang-toggle input:checked + label {
     background: #c8a96a;
     color: #000;
   }
 
-  /* ── Profile Fields ── */
   .profile-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -79,13 +73,35 @@
   .profile-grid select:focus { border-color: #c8a96a; }
   .profile-grid select option { background: #1c1a14; }
 
-  /* ── Query hint ── */
   .query-hint {
     font-size: 12px;
     color: #a08858;
     margin-top: 6px;
     text-align: center;
   }
+
+  .scheme-card {
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    border: 1px solid #c8a96a33 !important;
+  }
+
+  .scheme-card:hover {
+    transform: translateY(-3px);
+    border-color: #c8a96a88 !important;
+  }
+
+  .view-details-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #c8a96a;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .view-details-link:hover { color: #f5e7c6; }
 </style>
 
 </head>
@@ -167,6 +183,7 @@
               <p><b>Eligibility:</b> {{ scheme.eligibility }}</p>
               <p><b>Benefits:</b> {{ scheme.benefits }}</p>
               <p><b>About:</b> {{ scheme.about }}</p>
+              <a href="/scheme/{{ scheme.id }}" class="view-details-link">View full details →</a>
             </div>
           </div>
         </div>
@@ -178,6 +195,7 @@
   </div>
 
 </div>
+
 <script>
   const translations = {
     English: {
@@ -220,20 +238,12 @@
 
   function applyLanguage(lang) {
     const t = translations[lang];
-
-    // placeholders
     document.querySelector('input[name="age"]').placeholder        = t.age;
     document.querySelector('input[name="occupation"]').placeholder = t.occupation;
     document.querySelector('input[name="state"]').placeholder      = t.state;
     document.querySelector('input[name="query"]').placeholder      = t.query;
-
-    // search button
-    document.querySelector('.btn-submit').textContent = t.search;
-
-    // hint
-    document.querySelector('.query-hint').textContent = t.hint;
-
-    // gender dropdown
+    document.querySelector('.btn-submit').textContent              = t.search;
+    document.querySelector('.query-hint').textContent              = t.hint;
     const sel = document.querySelector('select[name="gender"]');
     sel.options[0].text = t.gender;
     sel.options[1].text = t.male;
@@ -241,14 +251,13 @@
     sel.options[3].text = t.other;
   }
 
-  // run on toggle change
   document.querySelectorAll('input[name="language"]').forEach(radio => {
     radio.addEventListener('change', () => applyLanguage(radio.value));
   });
 
-  // run on page load to match pre-selected language (after form submit)
   const selected = document.querySelector('input[name="language"]:checked');
   if (selected) applyLanguage(selected.value);
 </script>
+
 </body>
 </html>
