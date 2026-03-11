@@ -44,7 +44,7 @@ cd AI-Scheme-Finder
 Install dependencies:
 
 ```
-pip install flask pandas numpy scikit-learn sentence-transformers kagglehub
+pip install flask pandas numpy scikit-learn sentence-transformers kagglehub reportlab
 ```
 
 Run the application:
